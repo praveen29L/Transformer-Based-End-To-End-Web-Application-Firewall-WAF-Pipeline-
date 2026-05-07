@@ -1,0 +1,16 @@
+text,label
+GET /login?user=admin/**/OR/**/1=1,SQLI
+GET /login?username=admin'%09OR%091=1--,SQLI
+POST /auth user=admin'||'1'='1,SQLI
+GET /search?q=<ScRipT>alert(document.domain)</ScRipT>,XSS
+GET /comment?msg=<img src=x oNerrOr=alert(1)>,XSS
+POST /feedback message=<svg/onload=confirm(1)>,XSS
+GET /download?file=%2e%2e%2f%2e%2e%2fetc%2fpasswd,PATH_TRAVERSAL
+GET /view?path=..%252f..%252fetc%252fshadow,PATH_TRAVERSAL
+GET /api/read?file=..\\..\\windows\\system32\\drivers\\etc\\hosts,PATH_TRAVERSAL
+GET /ping?host=8.8.8.8|whoami,COMMAND_INJECTION
+GET /ping?ip=127.0.0.1;cat%20/etc/passwd,COMMAND_INJECTION
+POST /exec cmd=$(id),COMMAND_INJECTION
+GET /products?id=784,SAFE
+GET /search?q=wireless+mouse,SAFE
+POST /checkout product_id=12&qty=2,SAFE
