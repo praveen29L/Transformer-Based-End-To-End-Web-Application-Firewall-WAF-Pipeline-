@@ -1,0 +1,12 @@
+{
+  "model_path": "models\\checkpoints\\best_model",
+  "test_samples": 128,
+  "accuracy": 0.90625,
+  "weighted_precision": 0.9368421052631579,
+  "weighted_recall": 0.9058461538461537,
+  "weighted_f1": 0.9124782891880157,
+  "avg_confidence": 0.9028795957565308,
+  "median_confidence": 0.9941773414611816,
+  "min_confidence": 0.2240736335515976,
+  "max_confidence": 0.9949337840080261
+}
