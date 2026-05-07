@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI WAF Playground</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>AI WAF</span>
+            </div>
+
+            <div class="status-card">
+                <div class="status-indicator">
+                    <span class="dot pulse"></span>
+                    <span id="system-status">System Online</span>
+                </div>
+                <div class="model-info">
+                    <small>Model: DistilBERT</small>
+                    <small id="uptime">Uptime: 00:00:00</small>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="active"><i class="fa-solid fa-flask"></i> Playground</a>
+                <a href="/docs" target="_blank"><i class="fa-solid fa-book"></i> API Docs</a>
+            </nav>
+
+            <div class="stats-mini">
+                <div class="stat-item">
+                    <span class="label">Total Requests</span>
+                    <span class="value" id="stat-total">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">Blocked</span>
+                    <span class="value text-danger" id="stat-blocked">0</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>WAF Playground</h1>
+                <div class="actions">
+                    <button id="reset-stats" class="btn-secondary"><i class="fa-solid fa-rotate-right"></i> Reset
+                        Stats</button>
+                    <button id="refresh-logs" class="btn-primary"><i class="fa-solid fa-sync"></i> Refresh</button>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <!-- Attack Simulator -->
+                <section class="card simulator-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-bug"></i> Attack Simulator</h2>
+                        <div class="preset-selector">
+                            <select id="preset-payloads">
+                                <option value="">Select a preset payload...</option>
+                                <option value="safe">Benign: Product Search</option>
+                                <option value="sqli">SQL Injection (OOB)</option>
+                                <option value="xss">XSS (Script Tag)</option>
+                                <option value="traversal">Path Traversal (LFI)</option>
+                                <option value="cmd">Command Injection (Pipe)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="simulator-form">
+                        <div class="input-group">
+                            <select id="sim-method" class="method-select">
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="DELETE">DELETE</option>
+                            </select>
+                            <input type="text" id="sim-path" placeholder="/path/to/resource?query=..."
+                                value="/search?q=test">
+                        </div>
+
+                        <div class="input-group body-group" id="body-input-group" style="display: none;">
+                            <label>Request Body</label>
+                            <textarea id="sim-body" placeholder="{ 'json': 'data' } or form-data"></textarea>
+                        </div>
+
+                        <button id="btn-send-attack" class="btn-danger btn-block">
+                            <i class="fa-solid fa-paper-plane"></i> Send Request
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Analysis Result -->
+                <section class="card result-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-microscope"></i> AI Analysis</h2>
+                    </div>
+
+                    <div id="result-placeholder" class="result-placeholder">
+                        <i class="fa-solid fa-satellite-dish"></i>
+                        <p>Waiting for request...</p>
+                    </div>
+
+                    <div id="result-content" class="result-content" style="display: none;">
+                        <div class="status-badge" id="res-status-badge">ALLOWED</div>
+
+                        <div class="confidence-meter">
+                            <div class="meter-label">
+                                <span>Confidence Score</span>
+                                <span id="res-confidence-val">0%</span>
+                            </div>
+                            <div class="meter-track">
+                                <div class="meter-fill" id="res-confidence-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="analysis-details">
+                            <div class="detail-row">
+                                <span class="label">Prediction:</span>
+                                <span class="val" id="res-label">SAFE</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Threat Level:</span>
+                                <span class="val" id="res-threat">None</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Reason:</span>
+                                <span class="val" id="res-reason">-</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="label">Latency:</span>
+                                <span class="val" id="res-latency">0ms</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Live Logs -->
+                <section class="card logs-card">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-list-ul"></i> Live Logs</h2>
+                        <span class="live-tag">LIVE</span>
+                    </div>
+                    <div class="logs-container">
+                        <table class="logs-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Method</th>
+                                    <th>Path</th>
+                                    <th>Prediction</th>
+                                    <th>Conf</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logs-table-body">
+                                <!-- Logs injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
